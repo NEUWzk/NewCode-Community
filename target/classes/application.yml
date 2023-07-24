@@ -1,0 +1,31 @@
+spring:
+  thymeleaf:
+    cache: false #开发中设为false关闭缓存，上线后开启可减轻逻辑复杂度、减少数据库访问次数，提高服务器响应速度
+  datasource:
+    #    type: com.zaxxer.hikari.HikariDataSource #springboot2.0据说可以不写这项，反正标红，我不写了
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/community?characterEncoding=utf-8&useSSL=false&serverTimezone=UTC
+    username: root
+    password: 123456
+
+    hikari:
+      connection-test-query: SELECT 1
+      connection-timeout: 60000
+      idle-timeout: 500000
+      max-lifetime: 540000
+      maximum-pool-size: 12
+      minimum-idle: 10
+      pool-name: GuliHikariPool
+
+mybatis:
+  #标注待解析的mapper的xml文件位置
+  mapperLocations: classpath:mapper/*.xml
+  #标注实体类位置
+  typeAliasesPackage: com.thinkersre.entity
+  #启用自增长主键
+  configuration:
+    useGeneratedKeys: true
+    #下划线命名方式与驼峰命名方式匹配
+    mapUnderscoreToCamelCase: true
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+
