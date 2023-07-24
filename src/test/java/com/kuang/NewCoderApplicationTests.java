@@ -1,14 +1,14 @@
 package com.kuang;
-
-import com.kuang.Service.DiscussPostService;
-import com.kuang.dao.DiscussPostMapper;
-import com.kuang.dao.UserMapper;
-import com.kuang.entity.DiscussPost;
-import com.kuang.entity.User;
+import com.kuang.utils.MailClient;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.mail.javamail.JavaMailSender;
+import org.thymeleaf.TemplateEngine;
+import org.thymeleaf.context.Context;
 
 import javax.annotation.Resource;
 import java.util.List;
@@ -16,17 +16,18 @@ import java.util.List;
 @SpringBootTest
 class NewCoderApplicationTests {
 
-    @Resource
-    private UserMapper userMapper;
+    @Autowired
+    private JavaMailSender javaMailSender;
 
-    @Resource
-    private DiscussPostMapper discussPostMapper;
+    @Autowired
+    private MailClient mailClient;
 
     private static final Logger logger = LoggerFactory.getLogger(NewCoderApplicationTests.class);
 
     @Test
     void contextLoads() {
-       logger.debug("hello");
+        mailClient.sendMail("2508954704@qq.com","test-mail","测试");
     }
+
 
 }

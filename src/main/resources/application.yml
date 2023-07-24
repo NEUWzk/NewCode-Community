@@ -17,6 +17,19 @@ spring:
       minimum-idle: 10
       pool-name: GuliHikariPool
 
+  mail:
+    host: smtp.126.com
+    port: 465
+    username: wzk2508954704@126.com
+    password: JICNJRQCEMJFMXSZ
+    protocol: smtps
+    properties:
+      mail:
+        smtp:
+          ssl:
+            enable:
+              true
+
 mybatis:
   #标注待解析的mapper的xml文件位置
   mapperLocations: classpath:mapper/*.xml
