@@ -1,4 +1,6 @@
 package com.kuang;
+import com.kuang.dao.LoginTicketMaper;
+import com.kuang.entity.LoginTicket;
 import com.kuang.utils.MailClient;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
@@ -11,6 +13,7 @@ import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.Context;
 
 import javax.annotation.Resource;
+import java.util.Date;
 import java.util.List;
 
 @SpringBootTest
@@ -22,11 +25,16 @@ class NewCoderApplicationTests {
     @Autowired
     private MailClient mailClient;
 
+    @Autowired
+    private LoginTicketMaper loginTicketMaper;
+
     private static final Logger logger = LoggerFactory.getLogger(NewCoderApplicationTests.class);
 
     @Test
     void contextLoads() {
-        mailClient.sendMail("2508954704@qq.com","test-mail","测试");
+
+        loginTicketMaper.updateStatus("123",1);
+
     }
 
 

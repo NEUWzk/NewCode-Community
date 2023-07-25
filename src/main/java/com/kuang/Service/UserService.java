@@ -1,6 +1,8 @@
 package com.kuang.Service;
 
+import com.kuang.dao.LoginTicketMaper;
 import com.kuang.dao.UserMapper;
+import com.kuang.entity.LoginTicket;
 import com.kuang.entity.User;
 import com.kuang.utils.CommunityConstant;
 import com.kuang.utils.CommunityUtil;
@@ -22,6 +24,9 @@ public class UserService implements CommunityConstant {
 
     @Autowired
     private UserMapper userMapper;
+
+    @Autowired
+    private LoginTicketMaper loginTicketMaper;
 
     @Autowired
     private MailClient mailClient;
@@ -99,7 +104,7 @@ public class UserService implements CommunityConstant {
     /**
      * 激活邮件功能
      **/
-    public int activation(int userId, String code) {
+    public int activation(int userId, String code) {  //邮件模板中的url包含userid以及验证码
         User user = userMapper.selectById(userId);
         if (user.getStatus() == 1) {  //status=1表示用户已经激活过了
             return ACTIVATION_REPEAT;
@@ -112,7 +117,63 @@ public class UserService implements CommunityConstant {
     }
 
 
+    //用户登录业务
+    public Map<String, Object> login(String username, String password, int expiredSeconds)
+    {
+        HashMap<String, Object> map = new HashMap<>();
+        if(StringUtils.isBlank(username)) {
+            map.put("usernameMsg", "用户名不能为空！");
+            return map;
+        }
+        if (StringUtils.isBlank(password)) {
+            map.put("passwordMsg", "密码不能为空！");
+            return map;
+        }
 
+        //在user表里查询用户信息是否正确
+        User user = userMapper.selectByName(username);
+        if(user == null)
+        {
+            map.put("usernameMsg", "该账号不存在,请先注册！！");
+            return map;
+        }
+        int userStatus = user.getStatus(); // 用户状态 0 or 1
+        if(userStatus == 0){
+            map.put("usernameMsg", "该账号未激活！");
+            return map;
+        }
+
+        password = CommunityUtil.md5(password + user.getSalt());  //加密再比较
+        if (!user.getPassword().equals(password)) {
+            map.put("passwordMsg", "密码输入错误,请认真检查!！");
+            return map;
+        }  //执行到这里说明登录成功了
+        //接下来需要生成一个登陆成功凭证
+
+        LoginTicket loginTicket = new LoginTicket();
+        loginTicket.setUserId(user.getId());
+        loginTicket.setTicket(CommunityUtil.generateUUID());  //ticket为一串随机数
+        loginTicket.setExpired(new Date(System.currentTimeMillis() +
+                expiredSeconds * 1000)); //当前时间的毫秒数+过期时间毫秒数
+        loginTicket.setStatus(0);  //status为0，代表有效，可以访问其他业务，退出登录时需要将状态改成1
+        loginTicketMaper.insertLoginTicket(loginTicket);
+
+        map.put("ticket", loginTicket.getTicket());
+
+        return map;
+
+
+    }
+
+
+    public void logout(String ticket) {
+        loginTicketMaper.updateStatus(ticket,1); //状态为1表示无效登录
+    }
+
+    public LoginTicket findLoginTicket(String ticket)
+    {
+        return loginTicketMaper.selectByTicket(ticket);
+    }
 }
 
 

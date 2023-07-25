@@ -17,11 +17,11 @@ public interface CommunityConstant {  //定义一些常量
     /**
      * 默认状态的登录凭证的超时时间
      */
-    int DEFAULT_EXPIRED_SECONDS = 3600 * 12;
+    int DEFAULT_EXPIRED_SECONDS = 3600 * 12;  //没有 记住我
     /**
      * 记住状态的登录凭证超时时间
      */
-    int REMEMBER_EXPIRED_SECONDS = 3600 * 24 * 7;
+    int REMEMBER_EXPIRED_SECONDS = 3600 * 24 * 7;  //记住我的情况下
 
     /**
      * 实体类型: 帖子
